@@ -1,3 +1,5 @@
+local bitser = require 'lib.bitser'
+
 local draw = require("console.draw")
 
 local cmdline = {}
@@ -11,7 +13,12 @@ local history = {}
 
 -- generate a savedir and placeholder file
 love.filesystem.setIdentity( "console" )
-file = love.filesystem.newFile("carts/readme")
+local file = love.filesystem.newFile("carts/readme")
+file:open("w")
+file:write("placeholder")
+file:close()
+
+local file = love.filesystem.newFile("settings")
 file:open("w")
 file:write("placeholder")
 file:close()
@@ -22,13 +29,21 @@ local help = [[
 
         ]]
 
-local load = function(filename)
-    
-end
 
 local execute = function(input)
     if input == "help" then
         hbuffer = hbuffer .. help .. "\n"
+    elseif input:sub(1,4) == "save" then
+        local what = input:sub(6,-1)
+        if not what or what == "" then
+            hbuffer = hbuffer .. "please give cart name" .. "\n"
+        else
+            local what = what
+            if not string.find(input, ".cart") then
+                what = what .. ".cart" 
+            end
+            draw.save(what)
+        end
     elseif input == "ls" then
         files = love.filesystem.getDirectoryItems( "carts" ) 
         for i,v in pairs(files) do
@@ -41,6 +56,10 @@ local execute = function(input)
     elseif input:sub(1,4) == "load" then
         local what = input:sub(6,-1)
         if what and what ~= "" then
+            local what = what
+            if not string.find(input, ".cart") then
+                what = what .. ".cart" 
+            end
             files = love.filesystem.getDirectoryItems( "carts" ) 
             local f
             for i,v in pairs(files) do
@@ -50,10 +69,38 @@ local execute = function(input)
             end
             if not f then
                 hbuffer = hbuffer .. what .. " not found!" .. "\n"
+            else
+                draw.load(what)
+                hbuffer = hbuffer .. "loaded " .. what .. "\n"    
             end
         else
             hbuffer = hbuffer .. "load what?" .. "\n"
         end
+    elseif input:sub(1,2) == "rm" then
+        local what = input:sub(4,-1)
+        if what and what ~= "" then
+            local what = what
+            if not string.find(input, ".cart") then
+                what = what .. ".cart" 
+            end
+            files = love.filesystem.getDirectoryItems( "carts" ) 
+            local f
+            for i,v in pairs(files) do
+                if v == what then
+                    f = v
+                end
+            end
+            if not f then
+                hbuffer = hbuffer .. what .. " not found!" .. "\n"
+            else
+                love.filesystem.remove("carts/"..what)
+                hbuffer = hbuffer .. "removed " .. what .. "\n"
+            end
+        else
+            hbuffer = hbuffer .. "delete what?" .. "\n"
+        end
+    elseif input == "exit" or input == "quit" then
+        love.event.push('quit')
     else
         hbuffer = hbuffer .. "unknown command" .. "\n"
     end

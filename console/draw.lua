@@ -1,12 +1,13 @@
-local draw = {}
-local setColor = function(a, b, c, d)
-    if type(a) == 'table' then
-        love.graphics.setColor(a[1]/255, a[2]/255, a[3]/255)
-    elseif type(a) == 'number' and b and c then
-        love.graphics.setColor(a/255, b/255, c/255, (d or 255)/255)
-    end
-end
+local bitser = require 'lib.bitser'
+local t = require "funcs.table"
+local all, del, add = t.all, t.del, t.add
 
+local objects = {}
+
+local draw = {}
+local setColor = require "funcs.setColor"
+
+local status = ""
 
 local palette = require "palettes.pico8"
 local selectedBlock
@@ -92,6 +93,24 @@ local drawTilesetTilesToCanvas = function()
     love.graphics.setCanvas()
 end
 
+local cartFileName = "game.cart"
+local cartsFolder = "carts/"
+
+local saveTileset = function()
+    local savedata = bitser.dumps(tileset)
+    love.filesystem.write(cartsFolder..cartFileName, savedata)
+end
+
+local loadTileset = function()
+    if not love.filesystem.getInfo(cartsFolder..cartFileName) then
+        return
+    end
+    local savedata = love.filesystem.read(cartsFolder..cartFileName)
+    tileset = bitser.loads(savedata)
+    canvas = tileset["1,1"]
+end
+
+
 local drawTilesetTiles = function()
     setColor(255,255,255)
     love.graphics.draw(tilesetCanvas)
@@ -129,7 +148,50 @@ for x = 1, tilesetWidth do
         initCanvas(tileset[x..","..y])
     end
 end
+loadTileset()
 drawTilesetTilesToCanvas()
+
+local move = function(tx, ty)
+    local newCanvas = {}
+    for i=1, w do
+        for j=1,h do
+            local col = canvas[i..","..j]
+            local ti, tj = i + tx, j + ty
+            if ti < 1 then ti = w end
+            if ti > w then ti = 1 end
+            if tj < 1 then tj = h end
+            if tj > h then tj = 1 end
+            newCanvas[ti..","..tj] = col
+        end
+    end
+    local px,py = 0, 0
+    for x = 1, tilesetWidth do
+        for y = 1, tilesetHeight do
+            if canvas == tileset[x..","..y] then
+                px, py = x, y
+            end
+        end
+    end
+    canvas = newCanvas
+
+    if px ~= 0 and py ~= 0 then
+        tileset[px..","..py] = canvas
+    end
+    drawTilesetTilesToCanvas()
+end
+
+local moveLeft = function()
+    move(-1, 0)
+end
+local moveRight = function()
+    move(1, 0)
+end
+local moveUp = function()
+    move(0, -1)
+end
+local moveDown = function()
+    move(0, 1)
+end
 
 local clickTileset = function(mx,my,btn)
     local ox, oy = tilesetOffsetX, tilesetOffsetY
@@ -209,6 +271,32 @@ draw.draw = function()
     setColor(255,255,255)
     drawTileset()
     setColor(255,255,255)
+    for item in all(objects) do
+        item:draw()
+    end
+end
+
+draw.save = function(name)
+    cartFileName = name or cartFileName
+    saveTileset()
+end
+
+draw.load = function(name)
+    cartFileName = name or cartFileName
+    loadTileset()
+end
+
+local addSaveText = function()
+    local o = {}
+    o.t = 0
+    o.draw = function(self)
+        self.t = self.t + 1
+        if self.t > 60 then
+            del(objects, self)
+        end
+        love.graphics.print("SAVED AS "..cartFileName)
+    end
+    add(objects, o)
 end
 
 draw.keypressed = function(key)
@@ -216,6 +304,22 @@ draw.keypressed = function(key)
         local cmd = require("console.cmdline")
         cmd.console = draw.console
         draw.console.switch(cmd)
+    end
+    if key == "left" then
+        moveLeft()
+    end
+    if key == "right" then
+        moveRight()
+    end
+    if key == "up" then
+        moveUp()
+    end
+    if key == "down" then
+        moveDown()
+    end
+    if key == "s" then
+        draw.save()
+        addSaveText()
     end
 end
 
