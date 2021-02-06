@@ -1,7 +1,5 @@
 local bitser = require 'lib.bitser'
 
-local draw = require("console.draw")
-
 local cmdline = {}
 
 local input = ""
@@ -12,7 +10,7 @@ local history = {}
 
 
 -- generate a savedir and placeholder file
-love.filesystem.setIdentity( "console" )
+love.filesystem.setIdentity("console")
 local file = love.filesystem.newFile("carts/readme")
 file:open("w")
 file:write("placeholder")
@@ -42,7 +40,7 @@ local execute = function(input)
             if not string.find(input, ".cart") then
                 what = what .. ".cart" 
             end
-            draw.save(what)
+            cmdline.console.draw.save(what)
         end
     elseif input == "ls" then
         files = love.filesystem.getDirectoryItems( "carts" ) 
@@ -168,7 +166,7 @@ cmdline.keypressed = function(key)
             x = #linestart + #input
         end
     elseif key == "escape" then
-        cmdline.console.switch(draw)
+        cmdline.console.switch(cmdline.console.pixelEditor)
     elseif #key > 1 then
         -- catch any mod keys
     else
@@ -176,7 +174,11 @@ cmdline.keypressed = function(key)
         x = x + 1
     end
 end
+
 cmdline.mousepressed = function(...)
+end
+
+cmdline.init = function()
 end
 
 return cmdline

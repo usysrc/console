@@ -1,4 +1,4 @@
-local bitser = require 'lib.bitser'
+local serialize = require 'lib.ser'
 local t = require "funcs.table"
 local all, del, add = t.all, t.del, t.add
 
@@ -9,7 +9,7 @@ local setColor = require "funcs.setColor"
 
 local status = ""
 
-local palette = require "palettes.aapmicro12"
+local palette = require "palettes.dawnbringer16"
 
 local selectedBlock
 local blocks = {}
@@ -98,19 +98,26 @@ local cartFileName = "game.cart"
 local cartsFolder = "carts/"
 
 local saveTileset = function()
-    local savedata = bitser.dumps(tileset)
-    love.filesystem.write(cartsFolder..cartFileName, savedata)
+    return tileset
 end
 
 local loadTileset = function()
     if not love.filesystem.getInfo(cartsFolder..cartFileName) then
         return
     end
-    local savedata = love.filesystem.read(cartsFolder..cartFileName)
-    tileset = bitser.loads(savedata)
+    -- local savedata = love.filesystem.read()
+    cart = love.filesystem.load(cartsFolder..cartFileName)()
+    tileset = cart.tileset
+    draw.console.game.code = cart.code
     canvas = tileset["1,1"]
 end
 
+local saveGame = function()
+    local cart = {}
+    cart.code = draw.console.game.code
+    cart.tileset = saveTileset()
+    love.filesystem.write(cartsFolder..cartFileName, serialize(cart))
+end
 
 local drawTilesetTiles = function()
     setColor(255,255,255)
@@ -120,15 +127,17 @@ end
 local drawTilesetMarker = function()
     local currentCanvas = canvas
     local ox, oy = tilesetOffsetX, tilesetOffsetY
+    love.graphics.setLineWidth(2)
     for x = 1, tilesetWidth do
         for y = 1, tilesetHeight do
             if currentCanvas == tileset[x..","..y] then
                 setColor(255,255,255)
-                love.graphics.rectangle("line", ox+x*w-1, oy+y*h-1, w+5, h+5)
+                love.graphics.rectangle("line", ox+x*w, oy+y*h, w+2, h+2)
                 break
             end
         end
     end
+    love.graphics.setLineWidth(1)
 end
 
 local drawTileset = function()
@@ -144,13 +153,6 @@ local initCanvas = function(canvas)
         end
     end
 end
-for x = 1, tilesetWidth do
-    for y = 1, tilesetHeight do
-        initCanvas(tileset[x..","..y])
-    end
-end
-loadTileset()
-drawTilesetTilesToCanvas()
 
 local move = function(tx, ty)
     local newCanvas = {}
@@ -301,9 +303,7 @@ end
 
 draw.keypressed = function(key)
     if key == "escape" then
-        local cmd = require("console.cmdline")
-        cmd.console = draw.console
-        draw.console.switch(cmd)
+        draw.console.switch(draw.console.cmdline)
     end
     if key == "left" then
         moveLeft()
@@ -318,8 +318,11 @@ draw.keypressed = function(key)
         moveDown()
     end
     if key == "s" then
-        draw.save()
+        saveGame()
         addSaveText()
+    end
+    if key == "r" then
+        draw.console.switch(draw.console.game)
     end
 end
 
@@ -335,6 +338,17 @@ draw.mousepressed = function(x, y, btn)
         end
     end
 
+end
+
+draw.init = function(console)
+    draw.console = console
+    for x = 1, tilesetWidth do
+        for y = 1, tilesetHeight do
+            initCanvas(tileset[x..","..y])
+        end
+    end
+    loadTileset()
+    drawTilesetTilesToCanvas()
 end
 
 return draw

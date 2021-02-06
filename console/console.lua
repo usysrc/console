@@ -1,14 +1,30 @@
 local console = {}
 
-local cmdline = require "console.cmdline"
-cmdline.console = console
+--
+-- startup
+--
 
-local draw = require "console.draw"
-draw.console = console
 
-local tab = draw
+--
+-- set up different tabs
+--
+
+console.cmdline = require "console.cmdline"
+
+console.pixelEditor = require "console.pixelEditor"
+
+console.game = require("console.game")
+
+console.game.init(console)
+console.pixelEditor.init(console)
+console.cmdline.init(console)
+
+
+local tab = console.pixelEditor
 
 console.switch = function(targetTab)
+    assert(targetTab)
+    assert(type(targetTab) == "table")
     tab = targetTab
 end
 
@@ -26,5 +42,7 @@ end
 console.mousepressed = function(...)
     tab.mousepressed(...)
 end
+
+
 
 return console

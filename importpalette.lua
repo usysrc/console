@@ -40,7 +40,7 @@ function removeHash(str)
     if str:sub(1,1) == "#" then 
         return str:sub(2,-1)
     else 
-        return str 
+        return str
     end
 end
 
