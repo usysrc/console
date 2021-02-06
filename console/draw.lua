@@ -9,7 +9,8 @@ local setColor = require "funcs.setColor"
 
 local status = ""
 
-local palette = require "palettes.pico8"
+local palette = require "palettes.aapmicro12"
+
 local selectedBlock
 local blocks = {}
 local ox, oy = 8, 50
@@ -231,7 +232,6 @@ local rightClickCanvas = function(x,y)
     for i=1, w do
         for j=1,h do
             if x > ox + i * tw and x <= ox+i*tw + tw and y > oy + j * th and y <= oy+j*th + th then
-                print("clickcckc")
                 if canvas[i..","..j] then
                     local blk = findColorInBlocks(canvas[i..","..j])
                     if blk then
