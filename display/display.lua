@@ -12,11 +12,14 @@ love.graphics.setFont(love.graphics.newFont("fonts/monogram.ttf", 16))
 love.graphics.setLineStyle('rough')
 love.graphics.setLineWidth(1)
 
-display.update = function()
-    
+display.update = function(dt)
+    if dt < 1/30 then
+        love.timer.sleep(1/30 - dt)
+    end
 end
 
 display.beginDraw = function()
+    
     love.graphics.setCanvas(canvas)
 end
 

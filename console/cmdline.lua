@@ -178,7 +178,8 @@ end
 cmdline.mousepressed = function(...)
 end
 
-cmdline.init = function()
+cmdline.init = function(console)
+    cmdline.console = console
 end
 
 return cmdline

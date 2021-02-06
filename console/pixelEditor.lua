@@ -9,7 +9,7 @@ local setColor = require "funcs.setColor"
 
 local status = ""
 
-local palette = require "palettes.dawnbringer16"
+local palette = require "palettes.picodb"
 
 local selectedBlock
 local blocks = {}
@@ -322,6 +322,7 @@ draw.keypressed = function(key)
         addSaveText()
     end
     if key == "r" then
+        draw.console.game.runCode()
         draw.console.switch(draw.console.game)
     end
 end
