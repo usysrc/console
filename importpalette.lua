@@ -54,7 +54,7 @@ end
 io.write("file name: ")
 local filename = io.read()
 
-print("list of hex values:")
+print("list of hex values, empty line to start processing:")
 local input = {}
 for line in io.lines() do
     if line == "" then
@@ -77,7 +77,10 @@ for _, hex in ipairs(input) do
     local r = hex:sub(1,2)
     local g = hex:sub(3,4)
     local b = hex:sub(5,6)
-    print(r,g,b)
+    if #r < 1 or #g < 1 or #b < 1 then
+        print("wrong color format, should be like #115599")
+        return
+    end
     pr("\t{".. tonumber("0x"..r)..","..tonumber("0x"..g)..","..tonumber("0x"..b).. "},")
 end
 pr("}")
@@ -87,7 +90,9 @@ print(str)
 --
 -- WRITE TO FILE
 --
-
+if not filename then
+    return
+end
 file = io.open(folder .. filename, "w")
 io.output(file)
 io.write(str)
