@@ -36,9 +36,18 @@ local env = {
 }
 
 game.runCode = function()
-    local g = loadstring(game.code)
+    local g, err = loadstring(game.code)
+    if err then
+        print(err)
+        game.err = err
+        return
+    end
     setfenv(g, env)
-    g()
+    local status, err = pcall(g)
+    if err then
+        game.err = err
+        return
+    end
     env._init()
 end
 
@@ -49,6 +58,8 @@ end
 game.draw = function()
     love.graphics.clear()
     env._draw()
+    setColor(255,255,255)
+    if game.err then love.graphics.print(game.err) end
 end
 
 game.keypressed = function(key)

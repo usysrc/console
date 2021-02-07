@@ -19,7 +19,6 @@ console.game.init(console)
 console.pixelEditor.init(console)
 console.cmdline.init(console)
 
-
 local tab = console.pixelEditor
 
 console.switch = function(targetTab)
@@ -39,6 +38,7 @@ end
 console.keypressed = function(key)
     tab.keypressed(key)
 end
+
 console.mousepressed = function(...)
     tab.mousepressed(...)
 end

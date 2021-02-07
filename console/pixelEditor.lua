@@ -96,6 +96,7 @@ end
 
 local cartFileName = "game.cart"
 local cartsFolder = "carts/"
+local delim = "=============================================="
 
 local saveTileset = function()
     return tileset
@@ -105,18 +106,39 @@ local loadTileset = function()
     if not love.filesystem.getInfo(cartsFolder..cartFileName) then
         return
     end
-    -- local savedata = love.filesystem.read()
-    cart = love.filesystem.load(cartsFolder..cartFileName)()
-    tileset = cart.tileset
-    draw.console.game.code = cart.code
+
+    local target = "code"
+    local output = {
+        code = "",
+        data = ""
+    }
+    
+    for line in love.filesystem.lines(cartsFolder..cartFileName) do
+        if string.find(line, delim) then
+            target = "data"
+        else
+            output[target] = output[target] .. line .. "\n"
+        end
+    end
+    print(output.code)
+    local data = assert(loadstring(output.data))()
+    tileset = data.tileset
+    draw.console.game.code = output.code
     canvas = tileset["1,1"]
 end
 
+love.focus = function()
+    loadTileset()
+end
+
 local saveGame = function()
-    local cart = {}
-    cart.code = draw.console.game.code
-    cart.tileset = saveTileset()
-    love.filesystem.write(cartsFolder..cartFileName, serialize(cart))
+    local data = {}
+    data.tileset = saveTileset()
+    local output = ""
+    output = output .. draw.console.game.code
+    output = output .. delim.."\n"
+    output = output .. serialize(data)
+    love.filesystem.write(cartsFolder..cartFileName, output)
 end
 
 local drawTilesetTiles = function()
