@@ -16,13 +16,13 @@ local env = {
     _draw = function() end,
     _update = function() end,
     print = print,
-    spr = function(x, y)
+    spr = function(ti, x, y)
         local t = game.console.pixelEditor.getTileset()["1,1"]
         local pal = game.console.pixelEditor.getPalette()
         for i=1, 16 do
             for j=1,16 do
                 setColor(pal[t[i..","..j]])
-                love.graphics.rectangle("fill", i, j, 1, 1)
+                love.graphics.rectangle("fill", x+i, y+j, 1, 1)
             end
         end
         setColor(255,255,255)
@@ -31,7 +31,10 @@ local env = {
     del = del,
     add = add,
     btn = function(i)
-        return love.keypressed(i)
+        return love.keyboard.isDown(i)
+    end,
+    btnp = function(i)
+        return love.keyboard.isDown(i)
     end
 }
 
