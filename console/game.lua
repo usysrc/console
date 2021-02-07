@@ -1,9 +1,12 @@
+local setColor = require "funcs.setColor"
+local t = require "funcs.table"
+local all, del, add = t.all, t.del, t.add
+
 local game = {}
 
 game.code = [[
-    print("hi")
     _draw = function()
-        print("hi")
+        spr()
     end
     -- here be code:
 ]]
@@ -13,6 +16,23 @@ local env = {
     _draw = function() end,
     _update = function() end,
     print = print,
+    spr = function(x, y)
+        local t = game.console.pixelEditor.getTileset()["1,1"]
+        local pal = game.console.pixelEditor.getPalette()
+        for i=1, 16 do
+            for j=1,16 do
+                setColor(pal[t[i..","..j]])
+                love.graphics.rectangle("fill", i, j, 1, 1)
+            end
+        end
+        setColor(255,255,255)
+    end,
+    all = all,
+    del = del,
+    add = add,
+    btn = function(i)
+        return love.keypressed(i)
+    end
 }
 
 game.runCode = function()

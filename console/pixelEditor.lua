@@ -352,4 +352,12 @@ draw.init = function(console)
     drawTilesetTilesToCanvas()
 end
 
+draw.getTileset = function()
+    return tileset
+end
+
+draw.getPalette = function()
+    return palette
+end
+
 return draw
