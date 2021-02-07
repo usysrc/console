@@ -11,6 +11,8 @@ end
 -- here be code:
 ]]
 
+local down = {}
+
 local env = {
     _init = function() end,
     _draw = function() end,
@@ -34,7 +36,17 @@ local env = {
         return love.keyboard.isDown(i)
     end,
     btnp = function(i)
-        return love.keyboard.isDown(i)
+        local isDown = love.keyboard.isDown(i)
+        if down[i] and isDown then
+            return false
+        end
+        if down[i] and not isDown then
+            down[i] = false
+            return false
+        elseif not down[i] and isDown then
+            down[i] = true
+            return true
+        end
     end
 }
 
