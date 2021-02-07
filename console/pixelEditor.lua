@@ -84,7 +84,7 @@ local drawTilesetTilesToCanvas = function()
             for i=1, w do
                 for j=1, h do
                     if canvas[i..","..j] then
-                        setColor(canvas[i..","..j] and palette[canvas[i..","..j]] or palette[2])
+                        setColor(canvas[i..","..j] and palette[canvas[i..","..j]] or palette[1])
                         love.graphics.rectangle("fill", x*w+ox+i, y*h+oy+j, 1, 1)
                     end
                 end
@@ -120,7 +120,6 @@ local loadTileset = function()
             output[target] = output[target] .. line .. "\n"
         end
     end
-    print(output.code)
     local data = assert(loadstring(output.data))()
     tileset = data.tileset
     draw.console.game.code = output.code
@@ -171,7 +170,7 @@ local initCanvas = function(canvas)
     if canvas["1,1"] then return end
     for i=1, w do
         for j=1, h do
-            canvas[i..","..j] = 2
+            canvas[i..","..j] = 1
         end
     end
 end
@@ -232,7 +231,7 @@ end
 local drawCanvas = function()
     for i=1, w do
         for j=1, h do
-            setColor(canvas[i..","..j] and palette[canvas[i..","..j]] or palette[2])
+            setColor(canvas[i..","..j] and palette[canvas[i..","..j]] or palette[1])
             love.graphics.rectangle("fill", ox+i*tw, oy+j*th, tw, th)
         end
     end
@@ -372,6 +371,8 @@ draw.init = function(console)
     end
     loadTileset()
     drawTilesetTilesToCanvas()
+    selectedBlock = blocks[#blocks]
+    selectedBlock.selected = true
 end
 
 draw.getTileset = function()

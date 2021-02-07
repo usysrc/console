@@ -5,10 +5,10 @@ local all, del, add = t.all, t.del, t.add
 local game = {}
 
 game.code = [[
-    _draw = function()
-        spr()
-    end
-    -- here be code:
+_draw = function()
+    spr()
+end
+-- here be code:
 ]]
 
 local env = {
@@ -36,6 +36,7 @@ local env = {
 }
 
 game.runCode = function()
+    game.err = ""
     local g, err = loadstring(game.code)
     if err then
         print(err)
@@ -57,6 +58,9 @@ end
 
 game.draw = function()
     love.graphics.clear()
+    setColor(game.console.pixelEditor.getPalette()[1])
+    love.graphics.rectangle("fill", 0,0, love.graphics.getWidth(), love.graphics.getHeight())
+    
     env._draw()
     setColor(255,255,255)
     if game.err then love.graphics.print(game.err) end
@@ -64,7 +68,7 @@ end
 
 game.keypressed = function(key)
     if key == "escape" then
-        game.console.switch(game.console.cmdline)
+        game.console.switch(game.console.pixelEditor)
     end
 end
 game.mousepressed = function(...)
