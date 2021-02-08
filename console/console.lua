@@ -37,6 +37,8 @@ end
 
 console.keypressed = function(key)
     tab.keypressed(key)
+    
+    
 end
 
 console.mousepressed = function(...)

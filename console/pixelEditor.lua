@@ -301,7 +301,7 @@ end
 
 draw.save = function(name)
     cartFileName = name or cartFileName
-    saveTileset()
+    saveGame()
 end
 
 draw.load = function(name)

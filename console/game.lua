@@ -13,20 +13,33 @@ end
 
 local down = {}
 
+local sprites = {}
+
 local env = {
     _init = function() end,
     _draw = function() end,
     _update = function() end,
     print = print,
     spr = function(ti, x, y)
-        local t = game.console.pixelEditor.getTileset()["1,1"]
-        local pal = game.console.pixelEditor.getPalette()
-        for i=1, 16 do
-            for j=1,16 do
-                setColor(pal[t[i..","..j]])
-                love.graphics.rectangle("fill", x+i, y+j, 1, 1)
+        local ti, x, y = ti or 1, x or 0, y or 0
+        if not sprites[ti] then
+            local canvas = love.graphics.newCanvas(16,16)
+            local c = love.graphics.getCanvas()
+            love.graphics.setCanvas(canvas)
+            local tx, ty = (ti%16), math.floor(ti/16)
+            local t = game.console.pixelEditor.getTileset()["1,1"]
+            local pal = game.console.pixelEditor.getPalette()
+            for i=0, 16 do
+                for j=0,16 do
+                    setColor(pal[t[tx+i..","..ty+j]])
+                    love.graphics.rectangle("fill", i, j, 1, 1)
+                end
             end
+            love.graphics.setCanvas(c)
+            sprites[ti] = canvas
         end
+        setColor(255,255,255)
+        love.graphics.draw(sprites[ti], x, y)
         setColor(255,255,255)
     end,
     all = all,
@@ -91,6 +104,7 @@ end
 
 game.init = function(console)
     game.console = console
+    sprites = {}
 end
 
 return game

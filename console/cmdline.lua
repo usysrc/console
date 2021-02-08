@@ -40,7 +40,7 @@ local execute = function(input)
             if not string.find(input, ".cart") then
                 what = what .. ".cart" 
             end
-            cmdline.console.draw.save(what)
+            cmdline.console.pixelEditor.save(what)
         end
     elseif input == "ls" then
         files = love.filesystem.getDirectoryItems( "carts" ) 
@@ -97,6 +97,9 @@ local execute = function(input)
         else
             hbuffer = hbuffer .. "delete what?" .. "\n"
         end
+    elseif input == "run" or input == "start" then
+        cmdline.console.game.runCode()
+        cmdline.console.switch(cmdline.console.game)
     elseif input == "exit" or input == "quit" then
         love.event.push('quit')
     else
