@@ -1,5 +1,6 @@
-local setColor = require "funcs.setColor"
-local t = require "funcs.table"
+local palette = require("console.palette")
+local setColor = require("funcs.setColor")
+local t = require("funcs.table")
 local all, del, add = t.all, t.del, t.add
 
 local game = {}
@@ -13,7 +14,9 @@ end
 
 local down = {}
 
-local sprites = {}
+local sprites = require "console.sprites"
+
+local console
 
 local env = {
     _init = function() end,
@@ -22,24 +25,8 @@ local env = {
     print = print,
     spr = function(ti, x, y)
         local ti, x, y = ti or 1, x or 0, y or 0
-        if not sprites[ti] then
-            local canvas = love.graphics.newCanvas(16,16)
-            local c = love.graphics.getCanvas()
-            love.graphics.setCanvas(canvas)
-            local tx, ty = (ti%16), math.floor(ti/16)
-            local t = game.console.pixelEditor.getTileset()["1,1"]
-            local pal = game.console.pixelEditor.getPalette()
-            for i=0, 16 do
-                for j=0,16 do
-                    setColor(pal[t[tx+i..","..ty+j]])
-                    love.graphics.rectangle("fill", i, j, 1, 1)
-                end
-            end
-            love.graphics.setCanvas(c)
-            sprites[ti] = canvas
-        end
         setColor(255,255,255)
-        love.graphics.draw(sprites[ti], x, y)
+        love.graphics.draw(sprites.get(ti), x, y)
         setColor(255,255,255)
     end,
     all = all,
@@ -86,7 +73,7 @@ end
 
 game.draw = function()
     love.graphics.clear()
-    setColor(game.console.pixelEditor.getPalette()[1])
+    setColor(palette[1])
     love.graphics.rectangle("fill", 0,0, love.graphics.getWidth(), love.graphics.getHeight())
     
     env._draw()
@@ -96,15 +83,15 @@ end
 
 game.keypressed = function(key)
     if key == "escape" then
-        game.console.switch(game.console.pixelEditor)
+        console.switch(console.pixelEditor)
     end
 end
 game.mousepressed = function(...)
 end
 
-game.init = function(console)
-    game.console = console
-    sprites = {}
+game.init = function(c)
+    console = c
+    sprites.init()
 end
 
 return game

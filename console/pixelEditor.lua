@@ -1,7 +1,10 @@
-local serialize = require 'lib.ser'
+local topbar = require "console.topbar"
+local serialize = require "lib.ser"
 local t = require "funcs.table"
 local all, del, add = t.all, t.del, t.add
 
+local sprites = require "console.sprites"
+local console
 local objects = {}
 
 local draw = {}
@@ -9,7 +12,7 @@ local setColor = require "funcs.setColor"
 
 local status = ""
 
-local palette = require "palettes.picodb"
+local palette = require("console.palette")
 
 local selectedBlock
 local blocks = {}
@@ -122,7 +125,7 @@ local loadTileset = function()
     end
     local data = assert(loadstring(output.data))()
     tileset = data.tileset
-    draw.console.game.code = output.code
+    console.game.code = output.code
     canvas = tileset["1,1"]
 end
 
@@ -134,7 +137,7 @@ local saveGame = function()
     local data = {}
     data.tileset = saveTileset()
     local output = ""
-    output = output .. draw.console.game.code
+    output = output .. console.game.code
     output = output .. delim.."\n"
     output = output .. serialize(data)
     love.filesystem.write(cartsFolder..cartFileName, output)
@@ -283,10 +286,13 @@ draw.update = function(dt)
     elseif love.mouse.isDown(2) then
         clickCanvas(love.mouse.getX(), love.mouse.getY(), 2)
     end
+    topbar.draw()
 end
 
 draw.draw = function()
     love.graphics.clear()
+    setColor(palette[1])
+    love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
     setColor(255,255,255)
     drawBlocks()
     setColor(255,255,255)
@@ -297,6 +303,7 @@ draw.draw = function()
     for item in all(objects) do
         item:draw()
     end
+    topbar.draw()
 end
 
 draw.save = function(name)
@@ -317,14 +324,14 @@ local addSaveText = function()
         if self.t > 60 then
             del(objects, self)
         end
-        love.graphics.print("SAVED AS "..cartFileName)
+        love.graphics.print("SAVED AS "..cartFileName,0,16)
     end
     add(objects, o)
 end
 
 draw.keypressed = function(key)
     if key == "escape" then
-        draw.console.switch(draw.console.cmdline)
+        console.switch(console.cmdline)
     end
     if key == "left" then
         moveLeft()
@@ -343,8 +350,9 @@ draw.keypressed = function(key)
         addSaveText()
     end
     if key == "r" then
-        draw.console.game.runCode()
-        draw.console.switch(draw.console.game)
+        console.game.init(console)
+        console.game.runCode()
+        console.switch(console.game)
     end
 end
 
@@ -359,11 +367,12 @@ draw.mousepressed = function(x, y, btn)
             break
         end
     end
-
+    topbar.mousepressed(x,y,btn)
 end
 
-draw.init = function(console)
-    draw.console = console
+draw.init = function(c)
+    topbar.init(c)
+    console = c
     for x = 1, tilesetWidth do
         for y = 1, tilesetHeight do
             initCanvas(tileset[x..","..y])
