@@ -32,6 +32,7 @@ end
 mapEditor.mousepressed = function(x,y,btn)
     local tx, ty = math.floor(x/16), math.floor(y/16)
     map[tx..","..ty] = selectedTile
+    topbar.mousepressed(x,y,btn)
 end
 
 mapEditor.init = function(c)
