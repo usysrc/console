@@ -1,22 +1,32 @@
-local palette = require("console.palette")
+--[[
+    Utilities
+]]--
 local setColor = require("funcs.setColor")
 local t = require("funcs.table")
 local all, del, add = t.all, t.del, t.add
+
+--[[
+    Components
+]]--
+local palette = require("console.palette")
+local sprites   = require("console.sprites")
+local map       = require("console.map")
+
+--[[
+    Private
+]]--
+local console
 
 local game = {}
 
 game.code = [[
 _draw = function()
-    spr()
+    map()
 end
 -- here be code:
 ]]
 
 local down = {}
-
-local sprites = require "console.sprites"
-
-local console
 
 local env = {
     _init = function() end,
@@ -32,6 +42,9 @@ local env = {
     all = all,
     del = del,
     add = add,
+    cls = function()
+        love.graphics.clear()
+    end,
     btn = function(i)
         return love.keyboard.isDown(i)
     end,
@@ -47,6 +60,18 @@ local env = {
             down[i] = true
             return true
         end
+    end,
+    map = function(cell_x, cell_y, sx, sy,cell_w,cell_h)
+        for i=cell_x or 1, cell_w or 128 do
+            for j=cell_y or 1, cell_h or 128 do
+                local ti = map.getData(i,j)
+                if ti then
+                    setColor(255,255,255)
+                    love.graphics.draw(sprites.get(ti), i*16, j*16)
+                end
+            end
+        end
+        setColor(255,255,255)
     end
 }
 
