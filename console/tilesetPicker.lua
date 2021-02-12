@@ -39,7 +39,7 @@ local console
 local selectedTile
 local tilesetCanvas = love.graphics.newCanvas()
 local tilesetOffsetX, tilesetOffsetY = 4, 164
-local tilesetWidth = 14
+local tilesetWidth = 16
 local tilesetHeight = 4
 local w = 16
 local h = 16
@@ -136,6 +136,7 @@ tilesetPicker.click = function()
 end
 
 tilesetPicker.getSelectedTileID = function()
+    print(selectedTile.x + (selectedTile.y - 1) * tilesetWidth)
     return selectedTile.x + (selectedTile.y - 1) * tilesetWidth
 end
 

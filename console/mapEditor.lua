@@ -37,7 +37,6 @@ local tilesetPicker = require("console.tilesetPicker")
 ]]--
 local console
 
-
 --[[
     Public
 ]]--
@@ -82,6 +81,7 @@ end
 mapEditor.init = function(c)
     console = c
     topbar.init(c)
+    sprites.init()
     tilesetPicker.init()
 end
 

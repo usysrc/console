@@ -62,13 +62,13 @@ sprites.get = function(idx)
         local canvas = love.graphics.newCanvas(16,16)
         local c = love.graphics.getCanvas()
         love.graphics.setCanvas(canvas)
-        local tx, ty = (idx%16), math.floor(idx/16)
-        for i=0, 15 do
-            for j=0,15 do
-                local p = pixel[(tx+i)..","..(ty+j+1)]
+        local tx, ty = (((idx-1)%16))*16, math.floor((idx-1)/16)*16
+        for i=1, 16 do
+            for j=1,16 do
+                local p = pixel[(tx+i)..","..(ty+j)]
                 if p then
                     setColor(palette[p])
-                    love.graphics.rectangle("fill", i, j, 1, 1)
+                    love.graphics.rectangle("fill", i-1, j-1, 1, 1)
                 end
             end
         end
