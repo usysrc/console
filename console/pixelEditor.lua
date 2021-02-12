@@ -239,7 +239,34 @@ local addSaveText = function()
 end
 
 local copyToClipboard = function()
-    error("not implemented")
+    local offsetx, offsety = tilesetPicker.getOffsets()
+    clipboard = {}
+    for i=1, tilesetPicker.getTileWidth() do
+        for j=1, tilesetPicker.getTileHeight() do
+            clipboard[i..","..j] = sprites.getData(offsetx + i, offsety + j)
+        end
+    end
+end
+
+local cut = function()
+    copyToClipboard()
+    local offsetx, offsety = tilesetPicker.getOffsets()
+    for i=1, tilesetPicker.getTileWidth() do
+        for j=1, tilesetPicker.getTileHeight() do
+            sprites.setData(offsetx + i, offsety + j, 1)
+        end
+    end
+    tilesetPicker.update()
+end
+
+local paste = function()
+    local offsetx, offsety = tilesetPicker.getOffsets()
+    for i=1, tilesetPicker.getTileWidth() do
+        for j=1, tilesetPicker.getTileHeight() do
+            sprites.setData(offsetx + i, offsety + j, clipboard[i..","..j])
+        end
+    end
+    tilesetPicker.update()
 end
 
 --[[
@@ -272,6 +299,12 @@ draw.keypressed = function(key)
     end
     if key == "c" then
         copyToClipboard()
+    end
+    if key == "v" then
+        paste()
+    end
+    if key == "x" then
+        cut()
     end
 end
 
