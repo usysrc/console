@@ -139,6 +139,9 @@ local moveDown = function()
     move(0, 1)
 end
 
+--[[
+    Pixel canvas
+]]--
 local drawCanvas = function()
     local offsetx, offsety = tilesetPicker.getOffsets()
     for i=1, tilesetPicker.getTileWidth() do
@@ -154,7 +157,7 @@ local initCanvas = function()
     if sprites.getData(1,1) then return end
     for i=1, tilesetPicker.getTileWidth() do
         for j=1, tilesetPicker.getTileHeight() do
-            sprites.setData(i,j,1)
+            sprites.setData(i, j, 1)
         end
     end
 end
@@ -226,8 +229,6 @@ draw.draw = function()
     topbar.draw()
 end
 
-
-
 local copyToClipboard = function()
     local offsetx, offsety = tilesetPicker.getOffsets()
     clipboard = {}
@@ -250,6 +251,7 @@ local cut = function()
 end
 
 local paste = function()
+    if not clipboard then return end
     local offsetx, offsety = tilesetPicker.getOffsets()
     for i=1, tilesetPicker.getTileWidth() do
         for j=1, tilesetPicker.getTileHeight() do

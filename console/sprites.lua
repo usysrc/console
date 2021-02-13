@@ -59,10 +59,10 @@ end
 
 sprites.get = function(idx)
     if not storage[idx] then
-        local canvas = love.graphics.newCanvas(16,16)
+        local canvas = love.graphics.newCanvas(16, 16)
         local c = love.graphics.getCanvas()
         love.graphics.setCanvas(canvas)
-        local tx, ty = (((idx-1)%16))*16, math.floor((idx-1)/16)*16
+        local tx, ty = ((idx%16))*16, math.floor(idx/16)*16
         for i=1, 16 do
             for j=1,16 do
                 local p = pixel[(tx+i)..","..(ty+j)]

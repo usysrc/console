@@ -38,47 +38,30 @@ local tilesetPicker = {}
 local console
 local selectedTile
 local tilesetCanvas = love.graphics.newCanvas()
-local tilesetOffsetX, tilesetOffsetY = 4, 164
-local tilesetWidth = 16
+local tilesetOffsetX, tilesetOffsetY = 2, 164
+local tilesetWidth = 15
 local tilesetHeight = 4
 local w = 16
 local h = 16
 
-local drawTilesetTilesToCanvas = function()
-    love.graphics.setCanvas(tilesetCanvas)
+local drawTiles = function()
     local ox, oy = tilesetOffsetX, tilesetOffsetY
-    for x = 1, tilesetWidth do
-        for y = 1, tilesetHeight do
-            for i=1, w do
-                for j=1, h do
-                    local offsetx, offsety = (x-1)*w, (y-1)*h
-                    local p = sprites.getData(offsetx + i, offsety + j)
-                    if p then
-                        setColor(p and palette[p] or palette[1])
-                        love.graphics.rectangle("fill", x*w+ox+i, y*h+oy+j, 1, 1)
-                    end
-                end
-            end
+    for i=0, 64 do
+        local sprite = sprites.get(i)
+        if sprite then
+            setColor(255,255,255)
+            love.graphics.draw(sprite, ox+(i%(tilesetWidth+1))*w, oy+(math.floor(i/tilesetWidth))*h)
         end
     end
-    love.graphics.setCanvas()
-end
-
-local drawTilesetTiles = function()
-    setColor(255,255,255)
-    love.graphics.draw(tilesetCanvas)
 end
 
 local drawTilesetMarker = function()
     local ox, oy = tilesetOffsetX, tilesetOffsetY
     love.graphics.setLineWidth(2)
-    for x = 1, tilesetWidth do
-        for y = 1, tilesetHeight do
-            if selectedTile.x == x and selectedTile.y == y then
-                setColor(255,255,255)
-                love.graphics.rectangle("line", ox+x*w, oy+y*h, w+2, h+2)
-                break
-            end
+    for i=0, 64 do
+        if i == selectedTile then
+            setColor(255,255,255)
+            love.graphics.rectangle("line", ox+(i%tilesetWidth)*w, oy+(math.floor(i/tilesetWidth))*h, w, h)
         end
     end
     love.graphics.setLineWidth(1)
@@ -86,20 +69,16 @@ end
 
 local clickTileset = function(mx,my,btn)
     local ox, oy = tilesetOffsetX, tilesetOffsetY
-    for x = 1, tilesetWidth do
-        for y = 1, tilesetHeight do
-            if mx > ox+x*w and mx < ox+x*w+w and my > oy+y*h and my < oy+y*h+h then
-                selectedTile = {
-                    x = x,
-                    y = y
-                }
-            end
+    for i = 0, 64 do
+        if mx > ox+(i%tilesetWidth)*w and mx < ox+(i%tilesetWidth)*h + w and my > oy+(math.floor(i/tilesetWidth))*h and my < oy+(math.floor(i/tilesetWidth))*h+h then
+            print(i)
+            selectedTile = i
         end
     end
 end
 
 local drawTileset = function()
-    drawTilesetTiles()
+    drawTiles()
     drawTilesetMarker()
 end
 
@@ -107,12 +86,12 @@ end
     Public
 ]]--
 tilesetPicker.update = function()
-    drawTilesetTilesToCanvas()
+    --drawTilesetTilesToCanvas()
 end
 
 tilesetPicker.init = function(c)
     console = c
-    selectedTile = {x = 1, y = 1}
+    selectedTile = 1
 end
 
 tilesetPicker.getTileWidth = function()
@@ -124,7 +103,7 @@ tilesetPicker.getTileHeight = function()
 end
 
 tilesetPicker.getOffsets = function()
-    return (selectedTile.x - 1) * w, (selectedTile.y - 1) * h
+    return ((selectedTile%tilesetWidth))*w, (math.floor(selectedTile/tilesetWidth))*h
 end
 
 tilesetPicker.draw = function()
@@ -136,8 +115,7 @@ tilesetPicker.click = function()
 end
 
 tilesetPicker.getSelectedTileID = function()
-    print(selectedTile.x + (selectedTile.y - 1) * tilesetWidth)
-    return selectedTile.x + (selectedTile.y - 1) * tilesetWidth
+    return selectedTile
 end
 
 return tilesetPicker
