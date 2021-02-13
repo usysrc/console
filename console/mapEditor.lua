@@ -31,11 +31,24 @@ local topbar        = require("console.topbar")
 local sprites       = require("console.sprites")
 local map           = require("console.map")
 local tilesetPicker = require("console.tilesetPicker")
+local saveAndLoad   = require("console.saveAndLoad")
+local saveText      = require("console.saveText")
 
 --[[
     Private
 ]]--
 local console
+local objects
+
+local addTile = function()
+    local x,y = love.mouse.getX(), love.mouse.getY()
+    local tx, ty = math.floor(x/16), math.floor(y/16)
+    if ty > 1 and ty < 11 then
+        map.setData(tx, ty, tilesetPicker.getSelectedTileID())
+    end
+    topbar.mousepressed(x,y,btn)
+    tilesetPicker.click(x,y,btn)
+end
 
 --[[
     Public
@@ -43,7 +56,9 @@ local console
 local mapEditor = {}
 
 mapEditor.update = function(dt)
-
+    if love.mouse.isDown(1) then
+        addTile()
+    end
 end
 
 mapEditor.draw = function()
@@ -58,6 +73,9 @@ mapEditor.draw = function()
     end
     setColor(255,255,255)
     topbar.draw()
+    for item in all(objects) do
+        item:draw()
+    end
     tilesetPicker.draw()
 end
 
@@ -67,19 +85,19 @@ mapEditor.keypressed = function(key)
         console.game.runCode()
         console.switch(console.game)
     end
+    if key == "s" then
+        saveAndLoad.save()
+        saveText.add(objects)
+    end
 end
 
 mapEditor.mousepressed = function(x,y,btn)
-    local tx, ty = math.floor(x/16), math.floor(y/16)
-    if ty > 1 and ty < 11 then
-        map.setData(tx, ty, tilesetPicker.getSelectedTileID())
-    end
-    topbar.mousepressed(x,y,btn)
-    tilesetPicker.click(x,y,btn)
+    
 end
 
 mapEditor.init = function(c)
     console = c
+    objects = {}
     topbar.init(c)
     sprites.init()
     tilesetPicker.init()

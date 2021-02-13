@@ -34,6 +34,7 @@ local sprites       = require("console.sprites")
 local palette       = require("console.palette")
 local tilesetPicker = require("console.tilesetPicker")
 local saveAndLoad   = require("console.saveAndLoad")
+local saveText      = require("console.saveText")
 
 --[[
     Private
@@ -225,18 +226,7 @@ draw.draw = function()
     topbar.draw()
 end
 
-local addSaveText = function()
-    local o = {}
-    o.t = 0
-    o.draw = function(self)
-        self.t = self.t + 1
-        if self.t > 60 then
-            del(objects, self)
-        end
-        love.graphics.print("SAVED AS "..saveAndLoad.getCartFileName(),0,16)
-    end
-    add(objects, o)
-end
+
 
 local copyToClipboard = function()
     local offsetx, offsety = tilesetPicker.getOffsets()
@@ -290,7 +280,7 @@ draw.keypressed = function(key)
     end
     if key == "s" then
         saveAndLoad.save()
-        addSaveText()
+        saveText.add(objects)
     end
     if key == "r" then
         console.game.init(console)
