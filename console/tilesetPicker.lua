@@ -46,16 +46,17 @@ local h = 16
 
 local drawTiles = function()
     local ox, oy = tilesetOffsetX, tilesetOffsetY
-    for i=0, (tilesetWidth*tilesetHeight)-1 do
-        setColor(255,255,255)
-        love.graphics.rectangle("line", ox+(i%(tilesetWidth))*w, oy+(math.floor(i/tilesetWidth))*h, w, h)
-    end
+    
     for i=0, (tilesetWidth*tilesetHeight)-1 do
         local sprite = sprites.get(i)
         if sprite then
             setColor(255,255,255)
             love.graphics.draw(sprite, ox+(i%(tilesetWidth))*w, oy+(math.floor(i/tilesetWidth))*h)
         end
+    end
+    for i=0, (tilesetWidth*tilesetHeight)-1 do
+        setColor(50,50,50)
+        love.graphics.rectangle("line", ox+(i%(tilesetWidth))*w, oy+(math.floor(i/tilesetWidth))*h, w, h)
     end
 end
 

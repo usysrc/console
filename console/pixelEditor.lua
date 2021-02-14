@@ -178,11 +178,13 @@ local leftClickCanvas = function(x,y)
 end
 
 local rightClickCanvas = function(x,y)
+    local offsetx, offsety = tilesetPicker.getOffsets()
     for i=1, tilesetPicker.getTileWidth() do
         for j=1, tilesetPicker.getTileHeight() do
             if x > ox + i * tw and x <= ox+i*tw + tw and y > oy + j * th and y <= oy+j*th + th then
-                if sprites.getData(i,j) then
-                    local blk = findColorInBlocks(sprites.getData(i,j))
+                local data = sprites.getData(offsetx + i, offsety + j)
+                if data then
+                    local blk = findColorInBlocks(data)
                     if blk then
                         if selectedBlock then selectedBlock.selected = false end
                         selectedBlock = blk
