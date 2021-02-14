@@ -32,9 +32,14 @@ local palette = require("console.palette")
 --[[
     Private
 ]]--
-local TILESET_SIZE = 1024
 local pixel = {}
 local storage = {}
+local dirty = {}
+
+local setDirty = function(x,y)
+    local tx, ty = math.floor(x/16), math.floor(y/16)
+    dirty[tx+ty*16] = true
+end
 
 --[[
     Public
@@ -47,6 +52,7 @@ end
 
 sprites.setData = function(x, y, color)
     pixel[x..","..y] = color
+    setDirty(x,y)
 end
 
 sprites.getAllData = function()
@@ -58,11 +64,11 @@ sprites.setAllData = function(data)
 end
 
 sprites.get = function(idx)
-    if not storage[idx] then
+    if not storage[idx] or dirty[idx] then
         local canvas = love.graphics.newCanvas(16, 16)
         local c = love.graphics.getCanvas()
         love.graphics.setCanvas(canvas)
-        local tx, ty = ((idx%16))*16, math.floor(idx/16)*16
+        local tx, ty = (idx%16)*16, math.floor(idx/16)*16
         for i=1, 16 do
             for j=1,16 do
                 local p = pixel[(tx+i)..","..(ty+j)]
@@ -74,6 +80,7 @@ sprites.get = function(idx)
         end
         love.graphics.setCanvas(c)
         sprites.set(idx, canvas)
+        dirty[idx] = false
     end
     return storage[idx]
 end

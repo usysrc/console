@@ -22,7 +22,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 local display = {}
 local scale = 2
 local minScale = 1
-local w = 250
+local w = 300
 local h = 250
 
 success = love.window.updateMode( w * scale, h * scale, settings )

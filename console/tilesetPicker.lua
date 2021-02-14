@@ -38,19 +38,23 @@ local tilesetPicker = {}
 local console
 local selectedTile
 local tilesetCanvas = love.graphics.newCanvas()
-local tilesetOffsetX, tilesetOffsetY = 2, 164
-local tilesetWidth = 15
+local tilesetOffsetX, tilesetOffsetY = 22, 180
+local tilesetWidth = 16
 local tilesetHeight = 4
 local w = 16
 local h = 16
 
 local drawTiles = function()
     local ox, oy = tilesetOffsetX, tilesetOffsetY
-    for i=0, 64 do
+    for i=0, (tilesetWidth*tilesetHeight)-1 do
+        setColor(255,255,255)
+        love.graphics.rectangle("line", ox+(i%(tilesetWidth))*w, oy+(math.floor(i/tilesetWidth))*h, w, h)
+    end
+    for i=0, (tilesetWidth*tilesetHeight)-1 do
         local sprite = sprites.get(i)
         if sprite then
             setColor(255,255,255)
-            love.graphics.draw(sprite, ox+(i%(tilesetWidth+1))*w, oy+(math.floor(i/tilesetWidth))*h)
+            love.graphics.draw(sprite, ox+(i%(tilesetWidth))*w, oy+(math.floor(i/tilesetWidth))*h)
         end
     end
 end
@@ -58,7 +62,7 @@ end
 local drawTilesetMarker = function()
     local ox, oy = tilesetOffsetX, tilesetOffsetY
     love.graphics.setLineWidth(2)
-    for i=0, 64 do
+    for i=0, (tilesetWidth*tilesetHeight)-1 do
         if i == selectedTile then
             setColor(255,255,255)
             love.graphics.rectangle("line", ox+(i%tilesetWidth)*w, oy+(math.floor(i/tilesetWidth))*h, w, h)
@@ -69,9 +73,8 @@ end
 
 local clickTileset = function(mx,my,btn)
     local ox, oy = tilesetOffsetX, tilesetOffsetY
-    for i = 0, 64 do
+    for i = 0, (tilesetWidth*tilesetHeight)-1 do
         if mx > ox+(i%tilesetWidth)*w and mx < ox+(i%tilesetWidth)*h + w and my > oy+(math.floor(i/tilesetWidth))*h and my < oy+(math.floor(i/tilesetWidth))*h+h then
-            print(i)
             selectedTile = i
         end
     end
