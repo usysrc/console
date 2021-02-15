@@ -139,18 +139,24 @@ local moveDown = function()
     move(0, 1)
 end
 
+local foralltiles = function(fn)
+    for i=1, tilesetPicker.getTileWidth() do
+        for j=1, tilesetPicker.getTileHeight() do
+            fn(i,j)
+        end
+    end
+end
+
 --[[
     Pixel canvas
 ]]--
 local drawCanvas = function()
     local offsetx, offsety = tilesetPicker.getOffsets()
-    for i=1, tilesetPicker.getTileWidth() do
-        for j=1, tilesetPicker.getTileHeight() do
-            local p = sprites.getData(offsetx + i, offsety + j)
-            setColor(p and palette[p] or palette[1])
-            love.graphics.rectangle("fill", ox+i*tw, oy+j*th, tw, th)
-        end
-    end
+    foralltiles(function(i,j)
+        local p = sprites.getData(offsetx + i, offsety + j)
+        setColor(p and palette[p] or palette[1])
+        love.graphics.rectangle("fill", ox+i*tw, oy+j*th, tw, th)
+    end)
 end
 
 local initCanvas = function()
@@ -164,36 +170,32 @@ end
 
 local leftClickCanvas = function(x,y)
     local offsetx, offsety = tilesetPicker.getOffsets()
-    for i=1, tilesetPicker.getTileHeight() do
-        for j=1, tilesetPicker.getTileWidth() do
-            if x > ox + i * tw and x <= ox+i*tw + tw and y > oy + j * th and y <= oy+j*th + th then
-                if selectedBlock then
-                    sprites.setData(offsetx + i, offsety + j,selectedBlock.color)
-                    tilesetPicker.update()
-                    break
-                end
+    foralltiles(function(i,j)
+        if x > ox + i * tw and x <= ox+i*tw + tw and y > oy + j * th and y <= oy+j*th + th then
+            if selectedBlock then
+                sprites.setData(offsetx + i, offsety + j,selectedBlock.color)
+                tilesetPicker.update()
+                return
             end
         end
-    end
+    end)
 end
 
 local rightClickCanvas = function(x,y)
     local offsetx, offsety = tilesetPicker.getOffsets()
-    for i=1, tilesetPicker.getTileWidth() do
-        for j=1, tilesetPicker.getTileHeight() do
-            if x > ox + i * tw and x <= ox+i*tw + tw and y > oy + j * th and y <= oy+j*th + th then
-                local data = sprites.getData(offsetx + i, offsety + j)
-                if data then
-                    local blk = findColorInBlocks(data)
-                    if blk then
-                        if selectedBlock then selectedBlock.selected = false end
-                        selectedBlock = blk
-                        selectedBlock.selected = true
-                    end
+    foralltiles(function(i,j)
+        if x > ox + i * tw and x <= ox+i*tw + tw and y > oy + j * th and y <= oy+j*th + th then
+            local data = sprites.getData(offsetx + i, offsety + j)
+            if data then
+                local blk = findColorInBlocks(data)
+                if blk then
+                    if selectedBlock then selectedBlock.selected = false end
+                    selectedBlock = blk
+                    selectedBlock.selected = true
                 end
             end
         end
-    end
+    end)
 end
 
 local clickCanvas = function(x, y, btn)
@@ -216,7 +218,7 @@ end
 
 draw.draw = function()
     love.graphics.clear()
-    setColor(palette[1])
+    setColor(palette[2])
     love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
     setColor(255,255,255)
     drawBlocks()
@@ -234,32 +236,26 @@ end
 local copyToClipboard = function()
     local offsetx, offsety = tilesetPicker.getOffsets()
     clipboard = {}
-    for i=1, tilesetPicker.getTileWidth() do
-        for j=1, tilesetPicker.getTileHeight() do
-            clipboard[i..","..j] = sprites.getData(offsetx + i, offsety + j)
-        end
-    end
+    foralltiles(function(i,j)
+        clipboard[i..","..j] = sprites.getData(offsetx + i, offsety + j)
+    end)
 end
 
 local cut = function()
     copyToClipboard()
     local offsetx, offsety = tilesetPicker.getOffsets()
-    for i=1, tilesetPicker.getTileWidth() do
-        for j=1, tilesetPicker.getTileHeight() do
-            sprites.setData(offsetx + i, offsety + j, 1)
-        end
-    end
+    foralltiles(function(i,j)
+        sprites.setData(offsetx + i, offsety + j, 1)
+    end)
     tilesetPicker.update()
 end
 
 local paste = function()
     if not clipboard then return end
     local offsetx, offsety = tilesetPicker.getOffsets()
-    for i=1, tilesetPicker.getTileWidth() do
-        for j=1, tilesetPicker.getTileHeight() do
-            sprites.setData(offsetx + i, offsety + j, clipboard[i..","..j])
-        end
-    end
+    foralltiles(function(i,j)
+        sprites.setData(offsetx + i, offsety + j, clipboard[i..","..j])
+    end)
     tilesetPicker.update()
 end
 
