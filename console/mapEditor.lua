@@ -33,21 +33,40 @@ local map           = require("console.map")
 local tilesetPicker = require("console.tilesetPicker")
 local saveAndLoad   = require("console.saveAndLoad")
 local saveText      = require("console.saveText")
+local Camera        = require("lib.hump.camera")
 
 --[[
     Private
 ]]--
 local console
 local objects
+local dragging
+local camera
 
 local addTile = function()
-    local x,y = love.mouse.getX(), love.mouse.getY()
+    local x,y = camera:mousePosition()
     local tx, ty = math.floor(x/16), math.floor(y/16)
-    if ty > 1 and ty < 11 then
-        map.setData(tx, ty, tilesetPicker.getSelectedTileID())
-    end
+    map.setData(tx, ty, tilesetPicker.getSelectedTileID())
     topbar.mousepressed(x,y,btn)
     tilesetPicker.click(x,y,btn)
+end
+
+local drag = function()
+    local x,y = love.mouse.getX(), love.mouse.getY()
+    if not dragging then
+        dragging = {
+            x = x, y = y
+        }
+    else
+        local tx = x - dragging.x
+        local ty = y - dragging.y
+        dragging = {
+            x = x, y = y
+        }
+        camera:move(-tx, -ty)
+        camera.x = math.floor(camera.x)
+        camera.y = math.floor(camera.y)
+    end
 end
 
 --[[
@@ -57,20 +76,28 @@ local mapEditor = {}
 
 mapEditor.update = function(dt)
     if love.mouse.isDown(1) then
-        addTile()
+        if love.keyboard.isDown('space') or dragging then
+            drag()
+        else
+            addTile()
+        end
+    else
+        dragging = false
     end
 end
 
 mapEditor.draw = function()
     love.graphics.clear()
-    for i=1, 16 do
-        for j=1,16 do
+    camera:attach()
+    for i=-64, 64 do
+        for j=-64,64 do
             local t = map.getData(i, j)
             if t then
                 love.graphics.draw(sprites.get(t), i*16, j*16)
             end
         end
     end
+    camera:detach()
     setColor(255,255,255)
     topbar.draw()
     for item in all(objects) do
@@ -97,6 +124,7 @@ end
 
 mapEditor.init = function(c)
     console = c
+    camera = Camera(love.graphics.getWidth()/2,love.graphics.getHeight()/2)
     objects = {}
     topbar.init(c)
     sprites.init()

@@ -68,6 +68,10 @@ love.mouse.getY = function()
     return lmy()/scale
 end
 
+love.mouse.getPosition = function()
+    return lmx()/scale, lmy()/scale
+end
+
 display.mousepressed = function(fn, x, y, btn)
     local x = x / scale
     local y = y / scale
