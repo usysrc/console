@@ -296,6 +296,10 @@ draw.keypressed = function(key)
     if key == "x" then
         cut()
     end
+    if key == "tab" then
+        tilesetPicker.toggle()
+        topbar.toggle()
+    end
 end
 
 draw.mousepressed = function(x, y, btn)
