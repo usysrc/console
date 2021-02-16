@@ -46,10 +46,12 @@ local camera
 
 local addTile = function()
     local x,y = camera:mousePosition()
-    local tx, ty = math.floor(x/16), math.floor(y/16)
-    map.setData(tx, ty, tilesetPicker.getSelectedTileID())
-    topbar.mousepressed(x,y,btn)
-    tilesetPicker.click(x,y,btn)
+    if topbar.mousepressed(x,y,btn) then
+    elseif tilesetPicker.click(x,y,btn) then
+    else
+        local tx, ty = math.floor(x/16), math.floor(y/16)
+        map.setData(tx, ty, tilesetPicker.getSelectedTileID())
+    end
 end
 
 local drag = function()
@@ -89,7 +91,7 @@ end
 
 mapEditor.draw = function()
     love.graphics.clear()
-    setColor(255,255,255)
+    setColor(0,0,0)
     love.graphics.rectangle("fill", 0,0, love.graphics.getWidth(), love.graphics.getHeight())
     camera:attach()
     for i=-32, 32 do
@@ -122,6 +124,10 @@ mapEditor.keypressed = function(key)
     if key == "s" then
         saveAndLoad.save()
         saveText.add(objects)
+    end
+    if key == "tab" then
+        tilesetPicker.toggle()
+        topbar.toggle()
     end
 end
 

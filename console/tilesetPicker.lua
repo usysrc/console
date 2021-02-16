@@ -43,6 +43,7 @@ local tilesetWidth = 16
 local tilesetHeight = 4
 local w = 16
 local h = 16
+local hidden = false
 
 local drawTiles = function()
     local ox, oy = tilesetOffsetX, tilesetOffsetY
@@ -73,15 +74,18 @@ local drawTilesetMarker = function()
 end
 
 local clickTileset = function(mx,my,btn)
+    if hidden then return end
     local ox, oy = tilesetOffsetX, tilesetOffsetY
     for i = 0, (tilesetWidth*tilesetHeight)-1 do
         if mx > ox+(i%tilesetWidth)*w and mx < ox+(i%tilesetWidth)*h + w and my > oy+(math.floor(i/tilesetWidth))*h and my < oy+(math.floor(i/tilesetWidth))*h+h then
             selectedTile = i
+            return true
         end
     end
 end
 
 local drawTileset = function()
+    if hidden then return end
     drawTiles()
     drawTilesetMarker()
 end
@@ -115,11 +119,15 @@ tilesetPicker.draw = function()
 end
 
 tilesetPicker.click = function()
-    clickTileset(love.mouse.getX(), love.mouse.getY(), 1)
+    return clickTileset(love.mouse.getX(), love.mouse.getY(), 1)
 end
 
 tilesetPicker.getSelectedTileID = function()
     return selectedTile
+end
+
+tilesetPicker.toggle = function()
+    hidden = not hidden
 end
 
 return tilesetPicker

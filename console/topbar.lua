@@ -45,7 +45,7 @@ end
 
 local buttonClick = function(btn, x, y)
     if mouseOver(btn, x, y) then
-        if btn.onClick then btn.onClick() end
+        if btn.onClick then btn.onClick(); return true end
     end
 end
 
@@ -106,6 +106,7 @@ local createButtons = function()
 end
 
 topbar.draw = function()
+    if hidden then return end
     setColor(palette[2])
     love.graphics.rectangle("fill", 0,0, love.graphics.getWidth(), 16)
     setColor(255,255,255)
@@ -115,14 +116,19 @@ topbar.draw = function()
 end
 
 topbar.mousepressed = function(x,y,btn)
+    if hidden then return end
     for button in all(buttons) do
-        button:click(x,y)
+        if button:click(x,y) then return true end
     end
 end
 
 topbar.init = function(c)
     createButtons()
     console = c
+end
+
+topbar.toggle = function()
+    hidden = not hidden
 end
 
 return topbar
