@@ -30,6 +30,8 @@ local all, del, add = t.all, t.del, t.add
     Components
 ]]--
 local topbar        = require("console.topbar")
+local toolbar       = require("console.tools.toolbar")
+local toolController = require("console.tools.toolController")
 local sprites       = require("console.sprites")
 local palette       = require("console.palette")
 local tilesetPicker = require("console.tilesetPicker")
@@ -39,7 +41,7 @@ local saveText      = require("console.saveText")
 --[[
     Private
 ]]--
-local draw = {}
+local pixelEditor = {}
 
 local objects = {}
 local console
@@ -173,7 +175,7 @@ local leftClickCanvas = function(x,y)
     foralltiles(function(i,j)
         if x > ox + i * tw and x <= ox+i*tw + tw and y > oy + j * th and y <= oy+j*th + th then
             if selectedBlock then
-                sprites.setData(offsetx + i, offsety + j,selectedBlock.color)
+                toolController.click(offsetx + i, offsety + j, selectedBlock.color)
                 tilesetPicker.update()
                 return
             end
@@ -206,17 +208,29 @@ local clickCanvas = function(x, y, btn)
     end
 end
 
-draw.update = function(dt)
+local selectBlocks = function(x,y,btn)
+    for _, block in ipairs(blocks) do
+        if x > block.x and x < block.x + block.w and y > block.y and y < block.y + block.h then
+            if selectedBlock then
+                selectedBlock.selected = false
+            end
+            block.selected = true
+            selectedBlock = block
+            break
+        end
+    end
+end
+
+pixelEditor.update = function(dt)
     if love.mouse.isDown(1) then
         clickCanvas(love.mouse.getX(), love.mouse.getY(), 1)
         tilesetPicker.click(love.mouse.getX(), love.mouse.getY(), 1)
     elseif love.mouse.isDown(2) then
         clickCanvas(love.mouse.getX(), love.mouse.getY(), 2)
     end
-    topbar.draw()
 end
 
-draw.draw = function()
+pixelEditor.draw = function()
     love.graphics.clear()
     setColor(palette[2])
     love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
@@ -230,6 +244,7 @@ draw.draw = function()
     for item in all(objects) do
         item:draw()
     end
+    toolbar.draw()
     topbar.draw()
 end
 
@@ -262,7 +277,7 @@ end
 --[[
     Public
 ]]--
-draw.keypressed = function(key)
+pixelEditor.keypressed = function(key)
     if key == "escape" then
         console.switch(console.cmdline)
     end
@@ -298,27 +313,21 @@ draw.keypressed = function(key)
     end
     if key == "tab" then
         tilesetPicker.toggle()
+        toolbar.toggle()
         topbar.toggle()
     end
 end
 
-draw.mousepressed = function(x, y, btn)
-    for _, block in ipairs(blocks) do
-        if x > block.x and x < block.x + block.w and y > block.y and y < block.y + block.h then
-            if selectedBlock then
-                selectedBlock.selected = false
-            end
-            block.selected = true
-            selectedBlock = block
-            break
-        end
-    end
+pixelEditor.mousepressed = function(x, y, btn)
+    selectBlocks(x,y,btn)
     topbar.mousepressed(x,y,btn)
+    toolbar.mousepressed(x,y,btn)
 end
 
-draw.init = function(c)
+pixelEditor.init = function(c)
     console = c
     tilesetPicker.init(c)
+    toolbar.init(c)
     topbar.init(c)
     initBlocks()
     initCanvas()
@@ -329,12 +338,12 @@ draw.init = function(c)
     selectedBlock.selected = true
 end
 
-draw.getTileset = function()
+pixelEditor.getTileset = function()
     return tileset
 end
 
-draw.getPalette = function()
+pixelEditor.getPalette = function()
     return palette
 end
 
-return draw
+return pixelEditor
