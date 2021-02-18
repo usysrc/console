@@ -51,7 +51,7 @@ local buttonFactory = {
         btn.draw = function()
             setColor(palette[3])
             love.graphics.rectangle("fill", btn.x, btn.y, btn.w, btn.h)
-            if mouseOver(btn, love.mouse.getX(), love.mouse.getY()) then
+            if toolController.getTool() == toolController.tools.pixelTool then
                 setColor(255,255,255)
             else
                 setColor(128,128,128) 
@@ -74,7 +74,7 @@ local buttonFactory = {
         btn.draw = function()
             setColor(palette[3])
             love.graphics.rectangle("fill", btn.x, btn.y, btn.w, btn.h)
-            if mouseOver(btn, love.mouse.getX(), love.mouse.getY()) then
+            if toolController.getTool() == toolController.tools.fillTool then
                 setColor(255,255,255)
             else
                 setColor(128,128,128) 

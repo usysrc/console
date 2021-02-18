@@ -27,13 +27,16 @@ local tools = {
     fillTool = fillTool
 }
 
-local tool = fillTool
+local tool = pixelTool
 
 return {
     tools = tools,
     setTool = function(newTool)
         print(newTool)
         tool = newTool
+    end,
+    getTool = function()
+        return tool
     end,
     click = function(x,y,col)
         if tool and tool.click then
