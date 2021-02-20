@@ -29,14 +29,14 @@ local all, del, add = t.all, t.del, t.add
 --[[
     Components
 ]]--
-local topbar        = require("console.topbar")
-local toolbar       = require("console.tools.toolbar")
-local toolController = require("console.tools.toolController")
-local sprites       = require("console.sprites")
-local palette       = require("console.palette")
-local tilesetPicker = require("console.tilesetPicker")
-local saveAndLoad   = require("console.saveAndLoad")
-local saveText      = require("console.saveText")
+local topbar            = require("console.topbar")
+local toolbar           = require("console.tools.toolbar")
+local toolController    = require("console.tools.toolController")
+local sprites           = require("console.sprites")
+local palette           = require("console.palette")
+local tilesetPicker     = require("console.tilesetPicker")
+local saveAndLoad       = require("console.saveAndLoad")
+local saveText          = require("console.saveText")
 
 --[[
     Private
@@ -274,6 +274,39 @@ local paste = function()
     tilesetPicker.update()
 end
 
+local horizontalFlip = function()
+    local data = {}
+    local offsetx, offsety = tilesetPicker.getOffsets()
+    foralltiles(function(i,j)
+        data[(17 - i)..","..j] = sprites.getData(offsetx + i, offsety + j)
+    end)
+    foralltiles(function(i,j)
+        sprites.setData(offsetx + i, offsety + j, data[i..","..j])
+    end)
+end
+
+local verticalFlip = function()
+    local data = {}
+    local offsetx, offsety = tilesetPicker.getOffsets()
+    foralltiles(function(i,j)
+        data[i..","..(17 - j)] = sprites.getData(offsetx + i, offsety + j)
+    end)
+    foralltiles(function(i,j)
+        sprites.setData(offsetx + i, offsety + j, data[i..","..j])
+    end)
+end
+
+local rotate = function()
+    local data = {}
+    local offsetx, offsety = tilesetPicker.getOffsets()
+    foralltiles(function(i,j)
+        data[(17-j)..","..i] = sprites.getData(offsetx + i, offsety + j)
+    end)
+    foralltiles(function(i,j)
+        sprites.setData(offsetx + i, offsety + j, data[i..","..j])
+    end)
+end
+
 --[[
     Public
 ]]--
@@ -297,7 +330,7 @@ pixelEditor.keypressed = function(key)
         saveAndLoad.save()
         saveText.add(objects)
     end
-    if key == "r" then
+    if key == "t" then
         console.game.init(console)
         console.game.runCode()
         console.switch(console.game)
@@ -305,7 +338,7 @@ pixelEditor.keypressed = function(key)
     if key == "c" then
         copyToClipboard()
     end
-    if key == "v" then
+    if key == "p" then
         paste()
     end
     if key == "x" then
@@ -315,6 +348,15 @@ pixelEditor.keypressed = function(key)
         tilesetPicker.toggle()
         toolbar.toggle()
         topbar.toggle()
+    end
+    if key == "f" then
+        horizontalFlip()
+    end
+    if key == "v" then
+        verticalFlip()
+    end
+    if key == "r" then
+        rotate()
     end
 end
 

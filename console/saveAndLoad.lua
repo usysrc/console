@@ -63,7 +63,7 @@ local loadPixelEditor = function()
 end
 
 love.focus = function()
-    loadPixelEditor()
+    --loadPixelEditor()
 end
 
 local saveGame = function()
