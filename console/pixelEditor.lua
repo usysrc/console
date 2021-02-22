@@ -328,7 +328,7 @@ pixelEditor.keypressed = function(key)
     end
     if key == "s" then
         saveAndLoad.save()
-        saveText.add(objects)
+        saveText.add(objects, "SAVED AS "..saveAndLoad.getCartFileName())
     end
     if key == "t" then
         console.game.init(console)
@@ -357,6 +357,10 @@ pixelEditor.keypressed = function(key)
     end
     if key == "r" then
         rotate()
+    end
+    if key == "l" then
+        sprites.save()
+        saveText.add(objects, "SAVED AS SPRITES.PNG")
     end
 end
 

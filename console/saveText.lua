@@ -1,6 +1,6 @@
 local saveAndLoad = require("console.saveAndLoad")
 
-local add = function(objects)
+local add = function(objects, text)
     local o = {}
     o.t = 0
     o.draw = function(self)
@@ -8,9 +8,10 @@ local add = function(objects)
         if self.t > 60 then
             del(objects, self)
         end
-        love.graphics.print("SAVED AS "..saveAndLoad.getCartFileName(),0,16)
+        love.graphics.print(text,0,16)
     end
     add(objects, o)
+    return o
 end
 
 return {

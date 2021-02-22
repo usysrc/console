@@ -93,4 +93,23 @@ sprites.init = function()
     storage = {}
 end
 
+sprites.save = function()
+    local width, height = 512, 512
+    local imageData = love.image.newImageData( width, height )
+
+    for i=0, width-1 do
+        for j=0, height-1 do
+            local p = sprites.getData(i+1, j+1)
+            local col
+            if p then
+                col = palette[p]
+            else
+                col = {255,255,255}
+            end
+            imageData:setPixel(i,j,col[1]/255, col[2]/255, col[3]/255, 1)
+        end
+    end
+    imageData:encode('png', 'sprites.png')
+end
+
 return sprites
