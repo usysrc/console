@@ -35,9 +35,10 @@ local palette = require("console.palette")
 local pixel = {}
 local storage = {}
 local dirty = {}
+local w,h = 16, 16
 
 local setDirty = function(x,y)
-    local tx, ty = math.floor(x/16), math.floor(y/16)
+    local tx, ty = math.floor(x/w), math.floor(y/h)
     dirty[tx+ty*16] = true
 end
 
@@ -65,12 +66,12 @@ end
 
 sprites.get = function(idx)
     if not storage[idx] or dirty[idx] then
-        local canvas = love.graphics.newCanvas(16, 16)
+        local canvas = love.graphics.newCanvas(w, h)
         local c = love.graphics.getCanvas()
         love.graphics.setCanvas(canvas)
-        local tx, ty = (idx%16)*16, math.floor(idx/16)*16
-        for i=1, 16 do
-            for j=1,16 do
+        local tx, ty = (idx%w)*w, math.floor(idx/w)*h
+        for i=1, w do
+            for j=1,h do
                 local p = pixel[(tx+i)..","..(ty+j)]
                 if p then
                     setColor(palette[p])
@@ -94,22 +95,30 @@ sprites.init = function()
 end
 
 sprites.save = function()
-    local width, height = 512, 512
-    local imageData = love.image.newImageData( width, height )
-
-    for i=0, width-1 do
-        for j=0, height-1 do
-            local p = sprites.getData(i+1, j+1)
-            local col
-            if p then
-                col = palette[p]
-            else
-                col = {255,255,255}
+    love.filesystem.createDirectory("export")
+    for x=0,16 do
+        for y=0,16 do
+            local width, height = 16, 16
+            local imageData = love.image.newImageData( width, height )
+            local empty = true
+            for i=0, width-1 do
+                for j=0, height-1 do
+                    local p = sprites.getData(x*16 + i+1,y*16+ j+1)
+                    local col
+                    if p then
+                        col = palette[p]
+                        empty = false
+                    else
+                        col = {255,255,255,0}
+                    end
+                    imageData:setPixel(i,j,col[1]/255, col[2]/255, col[3]/255, col[4] or 1)
+                end
             end
-            imageData:setPixel(i,j,col[1]/255, col[2]/255, col[3]/255, 1)
+            if not empty then
+                imageData:encode('png', 'export/sprites_'..y..'-'..x..'.png')
+            end
         end
     end
-    imageData:encode('png', 'sprites.png')
 end
 
 return sprites

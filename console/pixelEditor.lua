@@ -358,7 +358,7 @@ pixelEditor.keypressed = function(key)
     if key == "r" then
         rotate()
     end
-    if key == "l" then
+    if key == "e" then
         sprites.save()
         saveText.add(objects, "SAVED AS SPRITES.PNG")
     end
