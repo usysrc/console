@@ -153,7 +153,6 @@ cmdline.update = function(dt)
 end
 
 cmdline.keypressed = function(key)
-    print(key)
     if key == "return" then
         history[#history+1] = input
         hbuffer = hbuffer .. linestart .. input.."\n"

@@ -92,6 +92,11 @@ end
 
 sprites.init = function()
     storage = {}
+    for x = 1, 512 do
+        for y = 1, 512 do
+            pixel[x..","..y] = 1
+        end
+    end
 end
 
 sprites.save = function()

@@ -140,7 +140,6 @@ mapEditor.init = function(c)
     camera = Camera(love.graphics.getWidth()/2,love.graphics.getHeight()/2)
     objects = {}
     topbar.init(c)
-    sprites.init()
     tilesetPicker.init()
 end
 

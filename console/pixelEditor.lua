@@ -328,7 +328,7 @@ pixelEditor.keypressed = function(key)
     end
     if key == "s" then
         saveAndLoad.save()
-        saveText.add(objects, "EXPORTED TO EXPORT/*.PNG")
+        saveText.add(objects, "SAVED AS "..saveAndLoad.getCartFileName())
     end
     if key == "t" then
         console.game.init(console)
@@ -360,7 +360,7 @@ pixelEditor.keypressed = function(key)
     end
     if key == "e" then
         sprites.save()
-        saveText.add(objects, "SAVED AS SPRITES.PNG")
+        saveText.add(objects, "EXPORTED TO EXPORT/*.PNG")
     end
 end
 

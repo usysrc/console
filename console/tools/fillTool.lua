@@ -32,10 +32,13 @@ local tool = {}
 -- click on the canvas
 -- the actual floodfill
 tool.click = function(x,y,color)
+    local w,h = 16, 16
+    local ux, uy = math.floor(x/w)*w, math.floor(y/h)*h
     local oldColor = sprites.getData(x,y)
     if color == oldColor then return end
     local colorize
     colorize = function(x, y)
+        if x > ux + w or x <= ux or y > uy + h or y <= uy then return end
         local col = sprites.getData(x, y)
         if col and col == oldColor then
             sprites.setData(x,y,color)

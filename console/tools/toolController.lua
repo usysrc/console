@@ -32,7 +32,6 @@ local tool = pixelTool
 return {
     tools = tools,
     setTool = function(newTool)
-        print(newTool)
         tool = newTool
     end,
     getTool = function()

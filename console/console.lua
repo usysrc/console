@@ -31,18 +31,16 @@ local console = {}
 --
 
 console.cmdline = require "console.cmdline"
-
 console.pixelEditor = require "console.pixelEditor"
-
 console.mapEditor = require("console.mapEditor")
-
 console.game = require("console.game")
-
+console.sprites = require("console.sprites")
 
 console.game.init(console)
 console.pixelEditor.init(console)
 console.mapEditor.init(console)
 console.cmdline.init(console)
+console.sprites.init(console)
 
 local tab = console.pixelEditor
 

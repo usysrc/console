@@ -137,7 +137,6 @@ end
 
 game.init = function(c)
     console = c
-    sprites.init()
 end
 
 return game
