@@ -26,6 +26,7 @@ local t = require "funcs.table"
 local all, del, add = t.all, t.del, t.add
 local mouseOver = require("funcs.mouseOver")
 local buttonClick = require("funcs.buttonClick")
+local image = require("image.image")
 
 --[[
     Components
@@ -46,17 +47,17 @@ local buttonFactory = {
         local btn = {}
         btn.x = 130
         btn.y = 150
-        btn.w = 12
-        btn.h = 12
+        btn.w = 16
+        btn.h = 16
         btn.draw = function()
             setColor(palette[3])
             love.graphics.rectangle("fill", btn.x, btn.y, btn.w, btn.h)
             if toolController.getTool() == toolController.tools.pixelTool then
                 setColor(255,255,255)
             else
-                setColor(128,128,128) 
+                setColor(128,128,128)
             end
-            love.graphics.print("p", btn.x+3, btn.y-3)
+            love.graphics.draw(image("pen"), btn.x, btn.y)
             setColor(255,255,255)
         end
         btn.click = buttonClick
@@ -69,8 +70,8 @@ local buttonFactory = {
         local btn = {}
         btn.x = 148
         btn.y = 150
-        btn.w = 12
-        btn.h = 12
+        btn.w = 16
+        btn.h = 16
         btn.draw = function()
             setColor(palette[3])
             love.graphics.rectangle("fill", btn.x, btn.y, btn.w, btn.h)
@@ -79,7 +80,7 @@ local buttonFactory = {
             else
                 setColor(128,128,128) 
             end
-            love.graphics.print("f", btn.x+3, btn.y-3)
+            love.graphics.draw(image("fill"), btn.x, btn.y)
             setColor(255,255,255)
         end
         btn.click = buttonClick
