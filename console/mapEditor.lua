@@ -123,7 +123,7 @@ mapEditor.keypressed = function(key)
     end
     if key == "s" then
         saveAndLoad.save()
-        saveText.add(objects)
+        saveText.add(objects, "SAVED AS "..saveAndLoad.getCartFileName())
     end
     if key == "tab" then
         tilesetPicker.toggle()
