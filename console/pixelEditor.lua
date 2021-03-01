@@ -105,7 +105,7 @@ end
     Move Command
 ]]--
 local move = function(tx, ty)
-    local offsetx, offsety = tilesetPicker.getOffsets()
+    local offsetx, offsety = tilesetPicker.getPixelOffsets()
     local newCanvas = {}
     local w, h = tilesetPicker.getTileWidth(), tilesetPicker.getTileHeight()
     for i=1, w do
@@ -153,7 +153,7 @@ end
     Pixel canvas
 ]]--
 local drawCanvas = function()
-    local offsetx, offsety = tilesetPicker.getOffsets()
+    local offsetx, offsety = tilesetPicker.getPixelOffsets()
     foralltiles(function(i,j)
         local p = sprites.getData(offsetx + i, offsety + j)
         setColor(p and palette[p] or palette[1])
@@ -171,7 +171,7 @@ local initCanvas = function()
 end
 
 local leftClickCanvas = function(x,y)
-    local offsetx, offsety = tilesetPicker.getOffsets()
+    local offsetx, offsety = tilesetPicker.getPixelOffsets()
     foralltiles(function(i,j)
         if x > ox + i * tw and x <= ox+i*tw + tw and y > oy + j * th and y <= oy+j*th + th then
             if selectedBlock then
@@ -184,7 +184,7 @@ local leftClickCanvas = function(x,y)
 end
 
 local rightClickCanvas = function(x,y)
-    local offsetx, offsety = tilesetPicker.getOffsets()
+    local offsetx, offsety = tilesetPicker.getPixelOffsets()
     foralltiles(function(i,j)
         if x > ox + i * tw and x <= ox+i*tw + tw and y > oy + j * th and y <= oy+j*th + th then
             local data = sprites.getData(offsetx + i, offsety + j)
@@ -249,7 +249,7 @@ pixelEditor.draw = function()
 end
 
 local copyToClipboard = function()
-    local offsetx, offsety = tilesetPicker.getOffsets()
+    local offsetx, offsety = tilesetPicker.getPixelOffsets()
     clipboard = {}
     foralltiles(function(i,j)
         clipboard[i..","..j] = sprites.getData(offsetx + i, offsety + j)
@@ -258,7 +258,7 @@ end
 
 local cut = function()
     copyToClipboard()
-    local offsetx, offsety = tilesetPicker.getOffsets()
+    local offsetx, offsety = tilesetPicker.getPixelOffsets()
     foralltiles(function(i,j)
         sprites.setData(offsetx + i, offsety + j, 1)
     end)
@@ -267,7 +267,7 @@ end
 
 local paste = function()
     if not clipboard then return end
-    local offsetx, offsety = tilesetPicker.getOffsets()
+    local offsetx, offsety = tilesetPicker.getPixelOffsets()
     foralltiles(function(i,j)
         sprites.setData(offsetx + i, offsety + j, clipboard[i..","..j])
     end)
@@ -276,7 +276,7 @@ end
 
 local horizontalFlip = function()
     local data = {}
-    local offsetx, offsety = tilesetPicker.getOffsets()
+    local offsetx, offsety = tilesetPicker.getPixelOffsets()
     foralltiles(function(i,j)
         data[(17 - i)..","..j] = sprites.getData(offsetx + i, offsety + j)
     end)
@@ -287,7 +287,7 @@ end
 
 local verticalFlip = function()
     local data = {}
-    local offsetx, offsety = tilesetPicker.getOffsets()
+    local offsetx, offsety = tilesetPicker.getPixelOffsets()
     foralltiles(function(i,j)
         data[i..","..(17 - j)] = sprites.getData(offsetx + i, offsety + j)
     end)
@@ -298,7 +298,7 @@ end
 
 local rotate = function()
     local data = {}
-    local offsetx, offsety = tilesetPicker.getOffsets()
+    local offsetx, offsety = tilesetPicker.getPixelOffsets()
     foralltiles(function(i,j)
         data[(17-j)..","..i] = sprites.getData(offsetx + i, offsety + j)
     end)
@@ -368,6 +368,7 @@ pixelEditor.mousepressed = function(x, y, btn)
     selectBlocks(x,y,btn)
     topbar.mousepressed(x,y,btn)
     toolbar.mousepressed(x,y,btn)
+    tilesetPicker.mousepressed(x,y,btn)
 end
 
 pixelEditor.init = function(c)

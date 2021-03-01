@@ -43,6 +43,7 @@ local console
 local objects
 local dragging
 local camera
+local pressedOnGui 
 
 local addTile = function()
     local x,y = camera:mousePosition()
@@ -72,12 +73,7 @@ local drag = function()
     end
 end
 
---[[
-    Public
-]]--
-local mapEditor = {}
-
-mapEditor.update = function(dt)
+local mapMouseHandle = function()
     if love.mouse.isDown(1) then
         if love.keyboard.isDown('space') or dragging then
             drag()
@@ -87,6 +83,32 @@ mapEditor.update = function(dt)
     else
         dragging = false
     end
+end
+
+local guiMouseHandle = function()
+    local x,y = love.mouse.getX(), love.mouse.getY()
+    if love.mouse.isDown(1) and not pressedOnGui and tilesetPicker.mousepressed(x,y,1) then
+        pressedOnGui = true
+        return true
+    end
+    if not love.mouse.isDown(1) then
+        pressedOnGui = false
+    end
+end
+
+local handleMouse = function()
+    if not guiMouseHandle() then
+        mapMouseHandle()
+    end
+end
+
+--[[
+    Public
+]]--
+local mapEditor = {}
+
+mapEditor.update = function(dt)
+    handleMouse()
 end
 
 mapEditor.draw = function()
