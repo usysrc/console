@@ -94,6 +94,7 @@ local guiMouseHandle = function()
     if not love.mouse.isDown(1) then
         pressedOnGui = false
     end
+    if pressedOnGui then return true end
 end
 
 local handleMouse = function()

@@ -33,6 +33,10 @@ r - rotate
 e - export all tiles
 t - run the game
 
+## Map editor
+
+tab - hide tilesheet
+
 # Command Line
 
 folder - open carts folder
